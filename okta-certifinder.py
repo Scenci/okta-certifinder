@@ -15,24 +15,75 @@ def parse_csv(file_path):
         data = [row["link"] for row in reader]
     return data
 
-
-
 options = webdriver.ChromeOptions()
 driver = webdriver.Chrome()
-#driver.get('https://www.credly.com/organizations/okta/directory')
 
-links = parse_csv('okta_consultants_q2_2023.csv')
+links = parse_csv('okta_consultants_q2_2023.csv') #TODO: add csv upload during runtime here.
 print(links,end="\n")
+
+missing_elements = {}  # dictionary to track missing elements
 
 for link in links:
     driver.get(link)
     time.sleep(2)
 
-    #needs updating
-    developer_cert = driver.find_element(By.XPATH,value="/html/body/main/div[1]/div[2]/div[2]/div/div[5]/div/a/div[2]/div")
-    consultant_cert = driver.find_element(By.XPATH,value="/html/body/main/div[1]/div[2]/div[2]/div/div[4]/div/a/div/div")
-    admin_cert = driver.find_element(By.XPATH,value="/html/body/main/div[1]/div[2]/div[2]/div/div[3]/div/a/div/div")
-    pro_cert = driver.find_element(By.XPATH,value="/html/body/main/div[1]/div[2]/div[2]/div/div[2]/div/a/div/div")
+    consultantNameElement = driver.find_element(By.XPATH,value="//*[@id=\"root\"]/div[1]/div[1]/div/div[2]/h1")
+
+    #Get the 4 different element types:
+    missing_elements[link] = []  # initialize list for this link
+
+    developer_cert = driver.find_elements(By.XPATH, value="//a[contains(@title, 'Okta Certified Developer')]")
+    if len(developer_cert) == 0:
+        missing_elements[link].append('developer_cert')
+    else:
+        developer_cert = developer_cert[0]
+
+    consultant_cert = driver.find_elements(By.XPATH,value="//a[contains(@title, 'Okta Certified Consultant')]")
+    if len(consultant_cert) == 0:
+        missing_elements[link].append('consultant_cert')
+    else:
+        consultant_cert = consultant_cert[0]
+
+    admin_cert = driver.find_elements(By.XPATH,value="//a[contains(@title, 'Okta Certified Administrator')]")
+    if len(admin_cert) == 0:
+        missing_elements[link].append('admin_cert')
+    else:
+        admin_cert = admin_cert[0]
+
+    pro_cert = driver.find_elements(By.XPATH,value="//a[contains(@title, 'Okta Certified Professional')]")
+    if len(pro_cert) == 0:
+        missing_elements[link].append('pro_cert')
+    else:
+        pro_cert = pro_cert[0]
+
+    #Start Data Search -- This project will require active maintences most likely.
+    #Each time the we do a driver.back() we need to refresh the elements below with their data because the driver gets cleared (stale element error) -- This explains why we are getting an error after the first iteration.
+    elements = [developer_cert, consultant_cert, admin_cert, pro_cert]
+    for element in elements:
+        if element is not None:
+            print("clicking element: "+str(element),end="\n")
+            time.sleep(2)
+            element.click()
+            time.sleep(2)
+                
+            issueDateElement = driver.find_elements(By.XPATH,value="/html/body/main/div[1]/div[1]/div/div[2]/p") #TODO: may need to make this more robust for UI changes or other notes.
+            expireDateElement = driver.find_elements(By.XPATH,value="/html/body/main/div[1]/div[1]/div/div[2]/span") #TODO: may need to make this more robust for UI changes or other notes.
+
+            if(issueDateElement is not None):
+                print(issueDateElement[0].text,end="\n")
+                #Save issueDateElement[0].text to csv file for matching user
+
+            if(expireDateElement is not None):
+                print(expireDateElement[0].text,end="\n")
+                #Save issueDateElement[0].text to csv file for matching user
+
+            driver.back() 
+            time.sleep(2)
+
+print(missing_elements,end="\n")  # print out the missing elements for each link
+
+
+#Search Logic
 
     #if(developer cert is not null):
         #get developer cert url
@@ -62,15 +113,6 @@ for link in links:
         #get pro cert expiration date:
         #print("user needs to take the next exam the next exam level",end="\n")
         
-
-#searchBox = driver.find_element(By.XPATH,value="/html/body/main/div[1]/div[2]/div/div[1]/div/div/div/div/div[1]/div/div/input")
-#searchBox.click()
-#earners = driver.find_element(By.XPATH,value="/html/body/main/div[1]/div[2]/div/div[1]/div/div/div/div/div[2]/div/ul/li[4]/span")
-#earners.click()
-#searchBox.send_keys("Steven Cenci")
-#consultant = driver.find_element(By.XPATH,value="/html/body/main/div[1]/div[2]/div/div[1]/div/div/div/div/div[2]/div/div/div/div/div/ul/li")
-#consultant.click()
-
 
 
 
