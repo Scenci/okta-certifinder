@@ -20,8 +20,12 @@ options = webdriver.ChromeOptions()
 options.add_argument("--headless")
 driver = webdriver.Chrome()
 
-links = parse_csv('okta_consultants_q2_2023.csv') #TODO: add csv upload during runtime here.
+links = parse_csv('okta_consultants_q2_2023.csv') 
+
+#TODO: add csv upload during runtime here.
+#TODO: Provide template to end users?
 #TODO: CSV may be able to handle URL generation based on firstname and lastname headers
+
 print(links,end="\n")
 
 missing_elements = {}  # dictionary to track missing elements
