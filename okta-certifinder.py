@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -18,8 +17,8 @@ def parse_csv(file_path):
     return data
 
 options = webdriver.ChromeOptions()
-options.add_argument("--headlesss")
-driver = webdriver.Chrome(options=options)
+options.add_argument("--headless")
+driver = webdriver.Chrome()
 
 links = parse_csv('okta_consultants_q2_2023.csv') #TODO: add csv upload during runtime here.
 #TODO: CSV may be able to handle URL generation based on firstname and lastname headers
@@ -58,8 +57,9 @@ for link in links:
                 print("clicking element: "+str(element),end="\n")
                 time.sleep(1)
                 element.click()
-                time.sleep(1.5)
-                    
+                time.sleep(2)
+
+                certificateName = driver.find_element(By.XPATH,value="/html/body/main/div[1]/div[2]/div/div[1]/div[2]/div[1]/div[1]/h1").text        
                 issueDateElement = driver.find_elements(By.XPATH,value="/html/body/main/div[1]/div[1]/div/div[2]/p") #TODO: may need to make this more robust for UI changes or other notes.
                 expireDateElement = driver.find_elements(By.XPATH,value="/html/body/main/div[1]/div[1]/div/div[2]/span") #TODO: may need to make this more robust for UI changes or other notes.
 
@@ -79,12 +79,12 @@ for link in links:
                 driver.back() 
                 time.sleep(1)
 
-                with open(export_name,"a") as file:
+                with open(export_name,"a",newline='') as file:
                     writer = csv.writer(file)
                     if(irow == 1):
-                        writer.writerow(["fullName","issueDate","expireDate"]) #headers
-                    writer.writerow([consultantNameElement, issueDate, expireDate]) 
-                irow = irow + 1 
+                        writer.writerow(["fullName","certificationName","issueDate","expireDate"]) #headers
+                        irow = irow + 1 
+                    writer.writerow([consultantNameElement,certificateName,issueDate, expireDate]) 
 
                 #careful with indentation here
                 if(consultantFound):
