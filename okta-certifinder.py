@@ -50,6 +50,7 @@ for link in links:
     #TODO: Handle Architect Certification - I think it counts towards both Developer and Consultant paths
     #Start Data Search -- This project will require active housekeeping
     consultantFound = False
+    expireBool = False
     for xpath in elements_xpaths:
         try:
             element = driver.find_element(By.XPATH, value=xpath)
@@ -76,6 +77,9 @@ for link in links:
 
                 if(expireDateElement):
                     expireDate = expireDateElement[0].text
+                    if('Expired' in expireDate):
+                        expireBool = True
+                        
                     print(expireDateElement[0].text,end="\n")
                 else:
                      expireDateElement = 'N/A'
@@ -86,9 +90,14 @@ for link in links:
                 with open(export_name,"a",newline='') as file:
                     writer = csv.writer(file)
                     if(irow == 1):
-                        writer.writerow(["fullName","certificationName","issueDate","expireDate"]) #headers
+                        writer.writerow(["fullName","certificationName","issueDate","expireDate","Expired"]) #headers
                         irow = irow + 1 
-                    writer.writerow([consultantNameElement,certificateName,issueDate, expireDate]) 
+
+                    if(expireBool):
+                        writer.writerow([consultantNameElement,certificateName,issueDate, expireDate,"***"])
+                        expireBool = False
+                    else:
+                        writer.writerow([consultantNameElement,certificateName,issueDate, expireDate])
 
                 #careful with indentation here
                 if(consultantFound):
