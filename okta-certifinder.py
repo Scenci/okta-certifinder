@@ -50,6 +50,7 @@ for link in links:
     #TODO: Handle Architect Certification - I think it counts towards both Developer and Consultant paths
     #Start Data Search -- This project will require active housekeeping
     consultantFound = False
+    AdminFound = False
     expireBool = False
     for xpath in elements_xpaths:
         try:
@@ -57,6 +58,9 @@ for link in links:
 
             if(xpath == "//a[contains(@title, 'Okta Certified Consultant')]"):
                 consultantFound = True
+            elif(xpath == "//a[contains(@title, 'Okta Certified Administrator')]"):
+                consultantFound = False
+                AdminFound = True
 
             if element is not None:
                 print("clicking element: "+str(element),end="\n")
@@ -101,6 +105,8 @@ for link in links:
 
                 #careful with indentation here
                 if(consultantFound):
+                    break
+                elif(AdminFound):
                     break
                     
         except NoSuchElementException:
