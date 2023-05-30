@@ -35,7 +35,6 @@ class Application(tk.Frame):
 
     #gui
     def create_widgets(self):
-
         self.upload = tk.Button(self)
         self.upload["text"] = "Upload CSV"
         self.upload["command"] = self.upload_file
@@ -51,7 +50,8 @@ class Application(tk.Frame):
         file_path = prompt_for_file()
         options = webdriver.ChromeOptions()
         options.add_argument("--headless=new")
-        driver = webdriver.Chrome(options=options)
+        driver = webdriver.Chrome()
+        #driver = webdriver.Chrome(options=options)
         links = parse_csv(file_path)
         #links = parse_csv('okta_consultants_q2_2023.csv')
         time.sleep(1)
@@ -88,6 +88,7 @@ class Application(tk.Frame):
 
                 consultantNameElement = driver.find_element(By.XPATH,value="//*[@id=\"root\"]/div[1]/div[1]/div/div[2]/h1").text
                 elements_xpaths = [
+                    "//a[contains(@title, 'Okta Certified Technical Architect')]",
                     "//a[contains(@title, 'Okta Certified Developer')]",
                     "//a[contains(@title, 'Okta Certified Consultant')]",
                     "//a[contains(@title, 'Okta Certified Administrator')]",
@@ -96,6 +97,7 @@ class Application(tk.Frame):
                 
                 #TODO: Handle Architect Certification - I think it counts towards both Developer and Consultant paths
                 #Start Data Search -- This project will require active housekeeping
+                architectFound = False
                 consultantFound = False
                 AdminFound = False
                 expireBool = False
@@ -103,6 +105,8 @@ class Application(tk.Frame):
                     try:
                         element = driver.find_element(By.XPATH, value=xpath)
 
+                        if(xpath == "//a[contains(@title, 'Okta Certified Technical Architect')]"):
+                            architectFound = True
                         if(xpath == "//a[contains(@title, 'Okta Certified Consultant')]"):
                             consultantFound = True
                         elif(xpath == "//a[contains(@title, 'Okta Certified Administrator')]"):
@@ -150,8 +154,9 @@ class Application(tk.Frame):
                                 else:
                                     writer.writerow([consultantNameElement,certificateName,issueDate, expireDate])
 
-                            #careful with indentation here
-                            if(consultantFound):
+                            if(architectFound):
+                                break
+                            elif(consultantFound):
                                 break
                             elif(AdminFound):
                                 break
