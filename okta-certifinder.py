@@ -35,16 +35,40 @@ class Application(tk.Frame):
 
     #gui
     def create_widgets(self):
+        #CSV Upload Button
         self.upload = tk.Button(self)
         self.upload["text"] = "Upload CSV"
         self.upload["command"] = self.upload_file
         self.upload["width"] = 30 #button w
         self.upload["height"] = 10 #button h
-        x = (self.winfo_screenwidth() // 2) - (self.upload.winfo_reqwidth() // 2)
-        y = (self.winfo_screenheight() // 2) - (self.upload.winfo_reqheight() // 2)
-        self.upload.place(x=x, y=y)
         self.upload.pack(side="top")
         self.upload.pack(side="top")
+
+        #Create Template Download Button
+        self.templateDL = tk.Button(self)
+        self.templateDL["text"] = "Download Template File"
+        self.templateDL["command"] = self.download_template
+        self.templateDL["width"] = 30
+        self.templateDL["height"] = 10
+        self.templateDL.pack(side="bottom")
+        self.templateDL.pack(side="bottom")
+
+    def download_template(self):
+        template_name = "consultant_template_export_name.csv"
+        #Check if template already exists
+        while os.path.isfile(template_name):
+            self.templateDL["text"] = "File already exists in folder!"
+            self.templateDL["activebackground"] = "red"
+            return
+
+        with open(template_name,"a",newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["firstName","lastName","link"]) #headers
+            writer.writerow(["Steven","Cenci","https://www.credly.com/users/steven-cenci/badges?filter%5Buser_name%5D=Steven%20Cenci&source=earner_directory"]) #example user
+            file.close
+            self.templateDL["text"] = "Done, check the current folder"
+
+        
 
     def upload_file(self):
         file_path = prompt_for_file()
@@ -57,7 +81,6 @@ class Application(tk.Frame):
         time.sleep(1)
         self.master.destroy()
 
-        #TODO: Provide template to end users?
         #TODO: CSV may be able to handle URL generation based on firstname and lastname headers
         # Examples
         # https://www.credly.com/users/steven-cenci/badges?filter%5Buser_name%5D=Steven%20Cenci&source=earner_directory
@@ -95,7 +118,7 @@ class Application(tk.Frame):
                     "//a[contains(@title, 'Okta Certified Professional')]"
                     ]
                 
-                #TODO: Handle Architect Certification - I think it counts towards both Developer and Consultant paths
+            
                 #Start Data Search -- This project will require active housekeeping
                 architectFound = False
                 consultantFound = False
@@ -174,6 +197,6 @@ class Application(tk.Frame):
 
 root = tk.Tk()
 root.title('okta-certifinder-v1.1')
-root.geometry('600x600')
+root.geometry('500x400')
 app = Application(master=root)
 app.mainloop()
