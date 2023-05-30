@@ -189,7 +189,7 @@ class Application(tk.Frame):
                         print("NoSuchElementException: "+str(xpath),end="\n")
                         continue
         finally:
-            #TODO: Selenium is hanging after its done, idk why                
+            #TODO FIX: Selenium is hanging after its done, idk why                
             #driver.implicitly_wait(2)
             driver.quit() # the driver is not closing on its own.
         driver.quit()
