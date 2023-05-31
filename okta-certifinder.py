@@ -33,6 +33,22 @@ class Application(tk.Frame):
         self.pack()
         self.create_widgets()
 
+    #generates a list of links based solely on the first and lastname fields from the file
+    def generateUserLinks(file):
+        #open file
+        #first two columns (first and last name) from each row
+        with open(file,'r') as f:
+            reader = csv.DictReader(f)
+            firstNames = []
+            lastNames = []
+            #much clear-er to do it like this... jeez python keep it simple stupid
+            for row in reader:
+                firstNames.append(row["firstName"])
+                lastNames.append(row["lastName"])
+                #build the link based off the template...
+                
+            
+
     #gui
     def create_widgets(self):
         #CSV Upload Button
