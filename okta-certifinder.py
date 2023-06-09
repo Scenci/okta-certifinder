@@ -47,8 +47,6 @@ class Application(tk.Frame):
                 lastNames.append(row["lastName"])
                 #build the link based off the template...
                 
-            
-
     #gui
     def create_widgets(self):
         #CSV Upload Button
@@ -83,8 +81,7 @@ class Application(tk.Frame):
             writer.writerow(["Steven","Cenci","https://www.credly.com/users/steven-cenci/badges?filter%5Buser_name%5D=Steven%20Cenci&source=earner_directory"]) #example user
             file.close
             self.templateDL["text"] = "Done, check the current folder"
-
-        
+   
 
     def upload_file(self):
         file_path = prompt_for_file()
@@ -104,7 +101,7 @@ class Application(tk.Frame):
         # https://www.credly.com/users/neil-malhotra/badges?filter%5Buser_name%5D=Neil%20Malhotra&source=earner_directory
         # Expected issues:
         # If the URL is missed (the name provided is wrong, misspelled, not accurate) - Throw Exception with Continue to next URL attempt...
-
+        # I need to finish this part of the project
         print(links,end="\n")
 
         counter = 1
